@@ -1,6 +1,6 @@
 import "../index.css";
 import React, { useEffect, useState } from "react";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, Navigate, useNavigate} from "react-router-dom";
 import Header from "../components/Header.js";
 import Footer from "../components/Footer.js";
 import Main from "../components/Main.js";
@@ -16,6 +16,8 @@ import ProtectedRouteElement from "./ProtectedRoute.js";
 import Login from "./Login";
 import Register from "./Register";
 import InfoTooltip from "./InfoTooltip";
+import auth_error from "../images/auth_error.svg";
+import auth_success from "../images/auth_success.svg";
 
 function App() {
   const [isAddPlacePopupOpen, setisAddPlacePopupOpen] = useState(false);
@@ -29,51 +31,58 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [isInfoTooltipOpen, setisInfoTooltipOpen] = useState(false);
   const [isRegister, setisRegister] = useState(false);
-  const [isEmail, setisEmail] = useState("");
+  const [userEmail, setuserEmail] = useState("");
+  // стейт для передачи сообщений об авторизации, успешной и не очень
+  const [noticeMassage, setnoticeMassage] = useState({image:'', text:''});
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const jwt = localStorage.getItem("jwt");
     if (jwt) {
-      console.log(jwt);
-      auth.checkToken(jwt).then((info) => {
+      auth.checkToken(jwt)
+      .then((info) => {
         if (info) {
-          console.log(info.data.email);
           setLoggedIn(true);
-          setisEmail(info.data.email);
-          // navigate('/');
+          setuserEmail(info.data.email);
+          navigate('/');
         }
+      })
+      .catch((err) => {
+        console.log(`Ошибка при проверке токена: ${err}`); // выведем ошибку в консоль
       });
     }
-  }, [loggedIn]);
+  }, [loggedIn, navigate]);
 
-  const handleLogin = () => {
+  const handleLoginSet = () => {
     setLoggedIn(true);
   };
 
   useEffect(() => {
-    api
-      .getUserInfo()
-      .then((userData) => {
-        console.log(userData);
-        setCurrentUser(userData);
-      })
-      .catch((err) => {
-        console.log(`Ошибка при загрузке информации о пользователе: ${err}`); // выведем ошибку в консоль
-      });
-  }, []);
+    if(loggedIn) {
+      api
+        .getUserInfo()
+        .then((userData) => {
+          setCurrentUser(userData);
+        })
+        .catch((err) => {
+          console.log(`Ошибка при загрузке информации о пользователе: ${err}`); // выведем ошибку в консоль
+        });
+    }
+  }, [loggedIn]);
 
   useEffect(() => {
-    api
-      .getAllCards()
-      .then((cardsData) => {
-        setCards(cardsData);
-      })
-      .catch((err) => {
-        console.log(`Ошибка при загрузке карточек: ${err}`); // выведем ошибку в консоль
-      });
-  }, []);
+    if(loggedIn) {
+      api
+        .getAllCards()
+        .then((cardsData) => {
+          setCards(cardsData);
+        })
+        .catch((err) => {
+          console.log(`Ошибка при загрузке карточек: ${err}`); // выведем ошибку в консоль
+        });
+      }   
+  }, [loggedIn]);
 
   function handleAddPlaceClick() {
     setisAddPlacePopupOpen(true);
@@ -124,11 +133,9 @@ function App() {
   }
 
   function handleAddPlaceSubmit(dataNewCard) {
-    // console.log(dataNewCard)
     api
       .addNewCard(dataNewCard)
       .then((newCard) => {
-        console.log(newCard);
         setCards([newCard, ...cards]);
         closeAllPopups();
       })
@@ -138,11 +145,9 @@ function App() {
   }
 
   function handleUpdateAvatar(dataAvatar) {
-    // console.log(dataAvatar)
     api
       .editAvatarInfo(dataAvatar)
       .then((avatar) => {
-        console.log(avatar);
         setCurrentUser(avatar);
         closeAllPopups();
       })
@@ -171,8 +176,52 @@ function App() {
     setisInfoTooltipOpen(false);
   }
 
+  function handleLogin(email, password) {
+    if (!email || !password) {
+      return;
+    }
+    auth
+      .authorize(email, password)
+      .then((data) => {
+        if (data.token) {
+          localStorage.setItem("jwt", data.token);
+          handleLoginSet();
+          navigate("/");
+        }
+      })
+      .catch(() => {
+        setnoticeMassage({image: auth_error, text: "Что-то пошло не так! Попробуйте ещё раз."});
+        setisInfoTooltipOpen(true);
+        setisRegister(false);
+      });
+  };
+
+  function handleRegister (email, password) {
+    if (password){
+      auth.register
+      (
+        email, 
+        password
+        )
+      .then(() => {
+        setisRegister(true);
+        setisInfoTooltipOpen(true);
+        setnoticeMassage({image: auth_success, text: "Вы успешно зарегистрировались!"});
+        navigate('/signin');
+        })
+      .catch(() => {
+        setnoticeMassage({image: auth_error, text: "Что-то пошло не так! Попробуйте ещё раз."});
+        setisInfoTooltipOpen(true) });
+    }
+  }
+
+  function outLogged () {
+    localStorage.removeItem("jwt");
+    setLoggedIn(false);
+  }
+
   return (
-    <BrowserRouter>
+    
       <CurrentUserContext.Provider value={currentUser}>
         <div className="root">
           <Routes>
@@ -189,8 +238,9 @@ function App() {
                 <>
                   <Header
                     loggedIn={loggedIn}
-                    isEmail={isEmail}
+                    userEmail={userEmail}
                     setLoggedIn={setLoggedIn}
+                    onSignOut={outLogged}
                     text={"Выйти"}
                     route={"/"}
                   />
@@ -214,8 +264,9 @@ function App() {
                 <>
                   <Header text={"Войти"} route={"/signin"} />
                   <Register
-                    setisRegister={setisRegister}
-                    setisInfoTooltipOpen={setisInfoTooltipOpen}
+                    // setisRegister={setisRegister}
+                    // setisInfoTooltipOpen={setisInfoTooltipOpen}
+                    onRegister={handleRegister}
                   />
                 </>
               }
@@ -226,10 +277,11 @@ function App() {
                 <>
                   <Header text={"Регистрация"} route={"/signup"} />
                   <Login
-                    handleLogin={handleLogin}
+                    handleLoginSet={handleLoginSet}
+                    onLogin={handleLogin}
                     loggedIn={loggedIn}
-                    setisRegister={setisRegister}
-                    setisInfoTooltipOpen={setisInfoTooltipOpen}
+                    // setisRegister={setisRegister}
+                    // setisInfoTooltipOpen={setisInfoTooltipOpen}
                   />
                 </>
               }
@@ -269,10 +321,10 @@ function App() {
             isOpen={isInfoTooltipOpen}
             onClose={closeAllPopups}
             register={isRegister}
+            noticeMassage={noticeMassage}
           />
         </div>
       </CurrentUserContext.Provider>
-    </BrowserRouter>
   );
 }
 

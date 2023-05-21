@@ -1,14 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import * as auth from "../utils/auth.js";
 import "../index.css";
 
-const Login = ({ handleLogin, setisInfoTooltipOpen }) => {
+const Login = ({ onLogin }) => {
   const [formValue, setFormValue] = useState({
     email: "",
     password: "",
   });
-  const navigate = useNavigate();
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -18,26 +15,12 @@ const Login = ({ handleLogin, setisInfoTooltipOpen }) => {
       [name]: value,
     });
   }
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formValue.email || !formValue.password) {
-      // console.log(formValue.email);
-      return;
-    }
 
-    auth
-      .authorize(formValue.email, formValue.password)
-      .then((data) => {
-        console.log(data);
-        if (data.token) {
-          localStorage.setItem("jwt", data.token);
-          setFormValue({ email: "", password: "" });
-          handleLogin();
-          navigate("/");
-        }
-      })
-      .catch(() => setisInfoTooltipOpen(true));
-  };
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onLogin(formValue.email, formValue.password);
+      setFormValue({ email: "", password: "" });
+    }
 
   return (
     <div className="auth">
