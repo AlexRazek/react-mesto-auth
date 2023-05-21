@@ -1,0 +1,32 @@
+.header {
+  width: calc(100% - 400px);
+  display: flex;
+  margin: 0 auto;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: flex-start;
+  padding-top: 45px;
+  /* margin-top: 45px; */
+  margin-bottom: 40px;
+  border-bottom: 1px solid rgb(84, 84, 84, 0.7);
+}
+
+@media (max-width: 1023px) {
+  .header {
+    width: calc(100% - 160px);
+  }
+}
+
+@media (max-width: 767px) {
+  .header {
+    width: calc(100% - 60px);
+  }
+}
+
+@media (max-width: 425px) {
+  .header {
+    width: 100%;
+    margin-top: 28px;
+    margin-bottom: 39px;
+  }
+}

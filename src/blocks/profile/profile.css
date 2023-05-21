@@ -1,0 +1,27 @@
+.profile {
+    margin: 0 auto;
+    padding: 0;
+    width: calc(100% - 400px);
+    display: grid;
+    grid-template-columns: 120px auto minmax(150px, 1fr);
+    /* grid-template-rows: repeat(1, min-content); */
+    align-items: center;
+    column-gap: 30px;
+    margin-bottom: 50px;
+  }
+
+  @media (max-width: 1023px) {
+    .profile {
+        width: calc(100% - 160px);
+      }
+    }
+    
+  @media (max-width: 767px) {
+    .profile {
+        width: calc(100% - 38px);
+        justify-items: center;
+        margin-bottom: 36px;
+        grid-template-columns: minmax(120px, 1fr);
+        grid-template-rows: repeat(3, min-content);
+      }
+    }

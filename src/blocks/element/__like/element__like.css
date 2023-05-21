@@ -1,0 +1,24 @@
+.element__like {
+    margin: 0 auto;
+    padding: 0;
+    background: url("../../../images/heard_w_o.svg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    border: none;
+    align-self: end;
+    /* align-self: center; */
+    /* justify-content: center; */
+    width: 22px;
+    height: 19px;
+    border-radius: 2px;
+    margin-bottom: 0;
+    justify-self: center;
+    /* margin-right: 20px; */
+    opacity: 1;
+    cursor: pointer;
+}
+
+.element__like:hover {
+    opacity: 0.5;
+    transition: opacity 1s linear;
+}

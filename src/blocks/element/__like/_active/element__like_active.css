@@ -1,0 +1,13 @@
+.element__like_active {
+    background: url("../../../../images/heard_with.svg");
+    /* background-repeat: no-repeat;
+    background-size: cover;
+    border: none; */
+    opacity: 1;
+    cursor: pointer;
+    color: black;
+}
+
+.element__like_active:hover {
+    opacity: 1;
+}

@@ -1,0 +1,19 @@
+.profile__avatar {
+    width: 100%;
+    width: 120px;
+    height: 120px;
+    place-self: center center;
+    border-radius: 50%;
+    z-index: 2;
+    background-size: cover;
+    font-size: 0;
+    /* object-fit: cover;
+    overflow:clip; */
+}
+
+@media (max-width: 425px) {
+    .profile__avatar {
+        grid-row: 1;
+    }
+  }
+

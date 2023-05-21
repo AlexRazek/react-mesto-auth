@@ -1,0 +1,28 @@
+.footer {
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+    /* margin-bottom: 60px; */
+    padding-bottom: 60px;
+    width: calc(100% - 400px);
+    justify-content: flex-start;
+    align-items: baseline;
+}
+  
+@media (max-width: 1023px) {
+    .footer {
+      width: calc(100% - 160px);
+    }
+  }
+
+@media (max-width: 767px) {
+    .footer {
+      width: calc(100% - 60px);
+    }
+  }
+  
+@media (max-width: 425px) {
+    .footer {
+      width: calc(100% - 38px);
+    }
+  }

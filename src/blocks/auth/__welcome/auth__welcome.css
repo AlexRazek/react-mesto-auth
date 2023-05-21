@@ -1,0 +1,12 @@
+.auth__welcome {
+    margin: 0;
+    padding-top: 20px;
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 900;
+    font-size: 24px;
+    line-height: 29px;
+    text-align: center;
+    color: #FFF;
+    margin-bottom: 50px;
+  }

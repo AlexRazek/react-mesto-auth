@@ -1,0 +1,34 @@
+.popup__image-view {
+    max-width: 75vw;
+    max-height: 75vh;
+    /* min-height: 40vh; */
+    min-width: 40vw;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-radius: 0;
+    /* grid-column: 1 / 3;
+    grid-row: 1; */
+    place-self: center center;
+    z-index: 5;
+}
+
+
+
+@media (max-width: 767px) {
+    .popup__image-view {
+        max-width: 310px;
+        /* width: 100%; */
+    }
+  }
+
+@media (max-width: 425px) {
+    .popup__image-view {
+        width: 240px;
+        height: 300px;
+        /* width: calc(100% - 80px); */
+        /* width: 240px;
+        height: 300px; */
+        /* width: 100%; */
+        padding: 0 40px;
+    }
+  }

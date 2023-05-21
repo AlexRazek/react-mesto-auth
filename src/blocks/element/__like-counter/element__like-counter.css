@@ -1,0 +1,11 @@
+.element__like-counter {
+  margin: 0 auto;
+  width: 10px;
+  height: 13px;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 16px;
+  text-align: center;
+  justify-self: center;
+  color: #000000;
+}
